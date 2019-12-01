@@ -1,7 +1,6 @@
 # Final year project
 
-Author: Osinowo Michael
-Institution: The University of Sheffield
+Author: Osinowo Michael               Institution: The University of Sheffield
 
 About:
 - Using Turing Learning and Genetic algorithm to generate datasets with similar stats but different graphs
