@@ -11,13 +11,13 @@ Aim:
 - Extend the algorithm to carry out the same task on multi-dimentional datasets.
 
 Topics
-. Genetic Algorithms
-. Turing Learning
-. Anscombe's quartet
+- Genetic Algorithms
+- Turing Learning
+- Anscombe's quartet
 
 Packages:
-. numpy
-. matplotlib
-. math
-. pandas
+- numpy
+- matplotlib
+- math
+- pandas
 
