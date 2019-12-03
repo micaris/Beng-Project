@@ -6,13 +6,15 @@ Supervisor: Roderich Gross
 
 """
 
-
+import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import math
 import tqdm
+import pytweening
+
 # Reading the for dataset into dataframe
 df = pd.read_csv("anscombes.csv")
 
@@ -60,7 +62,7 @@ plt.subplots_adjust(wspace=0.5, hspace=0.5)
 
 datasets = [df1, df2, df3, df4]
 
-# function to print stats
+# function to print summary statistics
 def print_stats(df_list):
     for i in range(0,len(df_list)):
         print('------DATASET {}-------'.format(i+1))
@@ -70,12 +72,15 @@ def print_stats(df_list):
         print("Y mean: ", df.y.mean())
         print("Y SD: ", df.y.std())
         print("Pearson correlation: ", df.corr().x.y)
-        
+
+# Printing the summary statistics of anscombe's quartet     
 print_stats(datasets)
 
 
 
-# recreating the Simulated Annealing approach
+# ---------- recreating the Simulated Annealing approach ----------- #
+
+#Reading datasets for test
 data_cloud = pd.read_csv("random_cloud.csv")
 data_dino = pd.read_csv("Datasaurus_data.csv")
 
@@ -86,6 +91,16 @@ def show_scatter_plot(data, linear_reg= True):
     
 show_scatter_plot(data_cloud, False)
 show_scatter_plot(data_dino, False)
+
+def is_kernel():
+    """Detects if running in an IPython session
+    """
+    if 'IPython' not in sys.modules:
+        # IPython hasn't been imported, definitely not
+        return False
+    from IPython import get_ipython
+    # check for `kernel` attribute on the IPython instance
+    return getattr(get_ipython(), 'kernel', None) is not None
 
 def dist(p1, p2):
     return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
@@ -222,20 +237,12 @@ def save_scatter_and_results(df, iteration, dp=72):
     plt.close()
 
 
+def s_curve(v):
+    return pytweening.easeInOutQuad(v)
 
 
-
-def run_pattern(df,
-                target,
-                iters=100000,
-                num_frames=100,
-                decimals=2,
-                shake=0.2,
-                max_temp=0.4,
-                min_temp=0,
-                freeze_for=0,
-                reset_counts=False,
-                custom_points=False):
+def run_pattern(df, target,iters=100000, num_frames=100, decimals=2, shake=0.2, max_temp=0.4,
+                min_temp=0, freeze_for=0, reset_counts=False, custom_points=False):
 
     """The main function, transforms one dataset into a target shape by
     perturbing it.
@@ -257,13 +264,13 @@ def run_pattern(df,
     write_frames.extend(extras)
 
     # this gets us the nice progress bars in the notebook, but keeps it from crashing
-    looper = tqdm.tnrange 
+    looper = tqdm.tnrange if is_kernel() else tqdm.trange 
     frame_count = 0
 
     # this is the main loop, were we run for many iterations to come up with the pattern
     for i in looper(iters + 1, leave=True, ascii=True, desc=target + " pattern"):
         
-        t = (max_temp - min_temp) * ((iters - i) / iters)) + min_temp
+         t = (max_temp - min_temp) * s_curve(((iters - i) / iters)) + min_temp
         test_good = perturb(r_good.copy(), initial=df, target='circle', temp=t)
        
         # here we are checking that after the perturbation, that the statistics are still within the allowable bounds
