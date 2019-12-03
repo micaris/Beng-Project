@@ -13,7 +13,7 @@ import numpy as np
 import seaborn as sns
 import math
 import tqdm
-import pytweening
+#import pytweening
 
 # Reading the for dataset into dataframe
 df = pd.read_csv("anscombes.csv")
@@ -237,8 +237,8 @@ def save_scatter_and_results(df, iteration, dp=72):
     plt.close()
 
 
-def s_curve(v):
-    return pytweening.easeInOutQuad(v)
+#def s_curve(v):
+#    return pytweening.easeInOutQuad(v)
 
 
 def run_pattern(df, target,iters=100000, num_frames=100, decimals=2, shake=0.2, max_temp=0.4,
@@ -270,8 +270,8 @@ def run_pattern(df, target,iters=100000, num_frames=100, decimals=2, shake=0.2, 
     # this is the main loop, were we run for many iterations to come up with the pattern
     for i in looper(iters + 1, leave=True, ascii=True, desc=target + " pattern"):
         
-         t = (max_temp - min_temp) * s_curve(((iters - i) / iters)) + min_temp
-        test_good = perturb(r_good.copy(), initial=df, target='circle', temp=t)
+        t = (max_temp - min_temp) * ((iters - i) / iters) + min_temp
+        test_good = perturb(r_good.copy(), initial=df, target=target, temp=t)
        
         # here we are checking that after the perturbation, that the statistics are still within the allowable bounds
         if is_error_still_ok(df, test_good, decimals):
@@ -292,16 +292,56 @@ def run_pattern(df, target,iters=100000, num_frames=100, decimals=2, shake=0.2, 
 
 
 
-run_pattern(data_cloud, target, iters=200000, num_frames=5)
+run_pattern(data_cloud, target='circle', iters=200000, num_frames=5)
+
+
+#-------------- Replicating Approach 2 : Genetic Algorithm ---------------#
+
+# Step 1 - Initialize Population
+
+def initialize_pop(pop_size, low= 0, high = 12):
+    new_pop = np.random.uniform(low=low, high=high, size=pop_size)
+    return new_pop
+
+# Fitness Function
+    
+def get_stats(data):
+    return np.array([data[0].mean(), data[0]])
+
+def fitness_ga(gene, ref_data, ordered_data=False, Kurtosis_skewness=False):
+    """
+    The fitness function for the data
+    Args:
+        gene: the dataset from a generation
+        ref_data: the dataset whose summary stats we aim to copy
+        stat_sim:
+    """
+    if Kurtosis_skewness:
+        
+    
+    
+
+# ----------------------------------- Testing ----------------#
+new_pop = initialize_pop(pop_size=(10,2,11))
+print(new_pop.size)
+x, y = new_pop[0][0], new_pop[0,1]
+plt.scatter(x,y)
+coef2 = np.polyfit(x,y,1)
+poly1d_fn = np.poly1d(coef2) 
+plt.plot(x, poly1d_fn(x), color='black')
+# ----------------------------------- Testing ----------------#
+
+def run_gen_algo(df, iteration=100000):
+    initialize_pop(df, pop_size= 100)
+    pass
 
 
 
 
 
 
-
-
-
+a, b = np.array([2,3,4,5]), np.array([3,4,6,1])
+print(a-b)
 
 
 
