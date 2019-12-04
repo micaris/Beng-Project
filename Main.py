@@ -10,6 +10,7 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.stats import kurtosis, skew
 import seaborn as sns
 import math
 import tqdm
@@ -295,57 +296,96 @@ def run_pattern(df, target,iters=100000, num_frames=100, decimals=2, shake=0.2, 
 run_pattern(data_cloud, target='circle', iters=200000, num_frames=5)
 
 
-#-------------- Replicating Approach 2 : Genetic Algorithm ---------------#
-
-# Step 1 - Initialize Population
-
-def initialize_pop(pop_size, low= 0, high = 12):
-    new_pop = np.random.uniform(low=low, high=high, size=pop_size)
-    return new_pop
-
-# Fitness Function
-    
-def get_stats(data):
-    return np.array([data[0].mean(), data[0]])
-
-def fitness_ga(gene, ref_data, ordered_data=False, Kurtosis_skewness=False):
-    """
-    The fitness function for the data
-    Args:
-        gene: the dataset from a generation
-        ref_data: the dataset whose summary stats we aim to copy
-        stat_sim:
-    """
-    if Kurtosis_skewness:
-        
-    
-    
-
-# ----------------------------------- Testing ----------------#
-new_pop = initialize_pop(pop_size=(10,2,11))
-print(new_pop.size)
-x, y = new_pop[0][0], new_pop[0,1]
-plt.scatter(x,y)
-coef2 = np.polyfit(x,y,1)
-poly1d_fn = np.poly1d(coef2) 
-plt.plot(x, poly1d_fn(x), color='black')
-# ----------------------------------- Testing ----------------#
-
-def run_gen_algo(df, iteration=100000):
-    initialize_pop(df, pop_size= 100)
-    pass
-
-
-
-
-
-
-a, b = np.array([2,3,4,5]), np.array([3,4,6,1])
-print(a-b)
-
-
-
-
+##-------------- Replicating Approach 2 : Genetic Algorithm ---------------#
+## reference data
+#ref_data = np.array([x1,y1])
+#
+#def initialize_pop(pop_size, low= 0, high = 12):
+#    """
+#    """
+#    new_pop = np.random.uniform(low=low, high=high, size=pop_size)
+#    return new_pop
+#
+## Fitness Function
+#    
+#def get_stats(data):
+#    return np.array([data[0].mean(), data[0]])
+#
+#def fitness_ga(gene, ref_data, ordered_data=False, Kurtosis_skewness=False):
+#    """
+#    This function calculats the fitness of the gene arg
+#    Args:
+#        gene: the dataset from a generation
+#        ref_data: the dataset whose summary stats we aim to mimic
+#        Kurtosis: a method of calculating graphical dissimilarity
+#    """
+#    if Kurtosis_skewness:
+#        return np.abs(np.sum(skew(gene, axis=1) 
+#                - skew(ref_data, axis=1)))
+#        
+#def selection(pop):
+#    """
+#    This function implements the stocastic 
+#    """
+#    pass
+#    
+#def mutate_gene(gene, error, min_tem= 0, max_temp = 0.4):
+#    
+#    # select a random row from that gene
+#    #row = np.random.randint(0, len(gene[0]))
+#    #x, y = gene[0], gene[1]
+#    #i_x = x[row]
+#    #i_y = y[row]
+#    
+#    
+#    pass
+#
+#def mutate_pop(pop):
+#    
+#    pass
+## ----------------------------------- Testing ----------------#
+#new_pop = initialize_pop(pop_size=(10,2,11))
+#print(new_pop.size)
+#x, y = new_pop[0][0], new_pop[0,1]
+#plt.scatter(x,y)
+#coef2 = np.polyfit(x,y,1)
+#poly1d_fn = np.poly1d(coef2) 
+#plt.plot(x, poly1d_fn(x), color='black')
+#
+#print(new_pop[0][0])
+#print(fitness_ga(new_pop[0], ref_data, Kurtosis_skewness= True))
+#print(np.abs(np.sum(skew(np.array([x1,y1]), axis=1) - skew(np.array([x1,y1]), axis=1))))
+#
+#def mock_mutate
+#
+#def sim_ann(iters = 100):
+#    temp = 0
+#    min_temp = 0
+#    max_temp = 0.4
+#    w , r = 0, 0
+#    for i in range(0, iters):
+#        do_bad = np.random.random_sample() < temp
+#        
+#        if do_bad:
+#            w += 1
+#        else:
+#            r += 1
+#            
+#        temp = (max_temp - min_temp) * ((iters - i) / iters) + min_temp
+#    print('Wrong Sol: {}'.format(w))
+#    print('Right Sol: {}'.format(r))
+#sim_ann()
+## ----------------------------------- Testing ----------------#
+#
+#def run_ga(df, iteration=100000):
+#    #ste
+#    initialize_pop(df, pop_size= 100)
+#    pass
+#
+#
+#
+#
+#
 
 
 
