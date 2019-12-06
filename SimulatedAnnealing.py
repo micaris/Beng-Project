@@ -126,7 +126,7 @@ def sim_ann(data, min_temp = 0, max_temp= 0.4, iters = 100):
     print('Wrong Solutions accepted: {}'.format(w))
     print('Right Solutions accepted: {}'.format(r))
     
-sim_ann()
+#sim_ann()
 
 #----------- Testing ----------------#
 new_ds = gen_new_ds()
