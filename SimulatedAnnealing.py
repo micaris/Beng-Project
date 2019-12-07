@@ -46,47 +46,50 @@ ref_stats = [9.000000000000000000e+00,
 
 
 #function to perturb the datasets
-def perturb(ds, initial, target_stat = ref_stats, shift_f=0.1, temp=0,):
+def perturb(ds, target_stat = ref_stats, 
+                shift= 0.1, 
+                temp=0,
+                x_lim = [0,12],
+                y_lim = [0,12]
+                ):
 
     # take one row at random, and move one of the points a bit
     row = np.random.randint(0, len(df))
     
 
-    new_ds = ds.copy
-    
+    new_ds = ds.copy()
+    x, y = new_ds[0], new_ds[1]
     # take one row at random, and move one of the points a bit
-    row = np.random.randint(0, len(df))
+    row = np.random.randint(0, len(ds))
+    i_xm, i_ym = x[row], y[row]
     
+    init_x = error_axis(x.mean(), target_stat[0])
+    init_y = error_axis(y.mean(), target_stat[2])
     # this is the simulated annealing step, if "do_bad", then we are willing to
     # accept a new state which is worse than the current one
     do_bad = np.random.random_sample() < temp
 
     while True:
-        xm = i_xm + np.random.randn() * shake
-        ym = i_ym + np.random.randn() * shake
-
-
-        if target == 'circle':
-            # info for the circle
-            cx = 54.26
-            cy = 47.83
-            r = 30
-            
-            dc1 = dist([df['x'][row], df['y'][row]], [cx, cy])
-            dc2 = dist([xm, ym], [cx, cy])
-            old_dist = abs(dc1 - r)
-            new_dist = abs(dc2 - r)
-
-        close_enough = (new_dist < old_dist or new_dist < allowed_dist or do_bad)
-        within_bounds = ym > y_bounds[0] and ym < y_bounds[1] and xm > x_bounds[0] and xm < x_bounds[1]
+        #perturb the values of the row chosen at random
+        x[row] = i_xm + np.random.randn() * shift
+        y[row] = i_ym + np.random.randn() * shift
+        
+        #calculate the new squared error
+        new_err_x = error_axis(x.mean(), target_stat[0])
+        new_err_y =  error_axis(y.mean(), target_stat[2])
+        
+        #determine if the error is better and values are within bounds
+        close_enough = (new_err_x < init_x and new_err_y < init_y) or do_bad
+        within_bounds = y[row] > y_lim[0] and y[row] < y_lim[1] and x[row] > x_lim[0] and x[row] < x_lim[1]
+        
         if close_enough and within_bounds:
             break
 
     # set the new data point, and return the set
-    df['x'][row] = xm
-    df['y'][row] = ym
+    new_ds[0]= x
+    new_ds[1]= y
     
-    return df
+    return new_ds
 
 #------error--------------#
 
@@ -94,9 +97,12 @@ def error(ds_stat, ref_stat):
     new_arr = np.subtract(ds_stat, ref_stat)
     return np.sum(np.square(np.abs(new_arr)))
 
+def error_axis(mean, ref_mean):
+    return abs((mean-ref_mean)**2)
+     
 #Main function 
 
-def sim_ann(data, min_temp = 0, max_temp= 0.4, iters = 100):
+def sim_ann(data, min_temp = 0, max_temp= 0.4, iters = 200):
     """
     This function takes in a dataset sampled from the joint
     distribution of the Anscombe's quartet and perturbs till
@@ -109,29 +115,18 @@ def sim_ann(data, min_temp = 0, max_temp= 0.4, iters = 100):
         shift: Factor by which the data point will be updated
     """
     temp = 0
-    min_temp = 0
-    max_temp = 0.4
-    w , r = 0, 0
+    new_ds = data.copy()
+    
     for i in range(0, iters):
-        do_bad = np.random.random_sample() < temp
-        
-        if do_bad:
-            w += 1
-        else:
-            r += 1
-            
-        # updating the temprature i.e mimicing the cooling effect
+        print('on iteration: {}'.format(i))
+        new_ds = perturb(new_ds, temp= temp)
         temp = (max_temp - min_temp) * ((iters - i) / iters) + min_temp
         
-    print('Wrong Solutions accepted: {}'.format(w))
-    print('Right Solutions accepted: {}'.format(r))
-    
-#sim_ann()
+    return new_ds
 
 #----------- Testing ----------------#
 new_ds = gen_new_ds()
-print(new_ds)
-x , y = new_ds[0], new_ds[1]
+opt_ds = sim_ann(new_ds)
 
 
 print('------DATASET new_ds-------')
