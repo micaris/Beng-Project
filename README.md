@@ -4,7 +4,7 @@ Author: Osinowo Michael
 Institution: The University of Sheffield
 
 About:
-- Using Turing Learning and Genetic algorithm to generate datasets with similar stats but different graphs
+- Using Machine learning algorithms to generate datasets with similar stats but different graphs
 
 Aim:
 - To come up with an algorithm that takes in a 2-dimentional dataset and generates other
