@@ -9,6 +9,7 @@ About:
 - Using Machine learning algorithms to generate datasets with similar stats but different graphs.
 - Seeking to use Generative models to generate Synthetic data
 - Why synthetic data ? : https://en.wikipedia.org/wiki/Synthetic_data#Applications
+
 Aim:
 - To come up with an algorithm that takes in a 2-dimentional dataset and generates other
   datasets that have the same summary statistics as the original but looks graphically different.
