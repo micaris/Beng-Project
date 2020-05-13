@@ -3,18 +3,18 @@
 """
 Created on Wed Feb 12 00:57:44 2020
 
-@author: michaelosinowo
+@author: Osinowo Michael
 """
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import kurtosis, skew, pearsonr
+from scipy.stats import kurtosis, skew, pearsonr, linregress
 import seaborn as sns
 
 class SimulatedAnnealing:
     
-    def __init__(self, min_temp = 0, max_temp = 0.4, iters = 200, alpha= 0.4, x_lim = [0,12], y_lim =[0,12]):
+    def __init__(self, min_temp = 0, max_temp = 0.4, iters = 200, alpha= 0.4, x_lim = [4,14], y_lim =[4,13]):
         """
         This function takes in a dataset sampled from the joint
         distribution of the Anscombe's quartet and perturbs till
@@ -27,11 +27,8 @@ class SimulatedAnnealing:
             alpha: Updating rate/ Learning rate
         """
         self._ERROR = []
-        self.ref_stats = [9.000000000000000000e+00,
-                            3.162277660168379523e+00,
-                            7.500681818181818450e+00,
-                            1.936536623931276013e+00,
-                            8.163662996807959926e-01]
+        self.ref_stats = [9.0        , 3.31662479, 7.50090909, 2.03156814, 0.81642052,
+       0.50009091, 3.00009091, 0.66654246]
         self.min_temp = 0
         self.max_temp = 0
         self.iters = iters
@@ -43,7 +40,7 @@ class SimulatedAnnealing:
 
         
         
-    def gen_new_ds(self, low = 0, high= 12, size= (2, 11)):
+    def gen_new_ds(self, low = 4, high= 13, size= (2, 11)):
         """
         This function produces a random dataset within the
         bounds of the Anscombe's quartet values.
@@ -55,6 +52,7 @@ class SimulatedAnnealing:
         self.new_ds = np.random.uniform(low=low, high=high, size=size)
         
         return np.array([self.new_ds[0], self.new_ds[1]]) 
+    
     
     def get_sum_stats(self, x, y):
         """
@@ -70,9 +68,10 @@ class SimulatedAnnealing:
         ###print("Y mean: ", y.mean())
         ##print("Y SD: ", y.std())
         #print("Pearson correlation: ", pearsonr(x,y)[0])
-    
-        return [x.mean(), x.std(), y.mean(), y.std(), pearsonr(x,y)[0]]
-    
+        slope, intercept, r_value, _ , _ = linregress(x,y) 
+   
+        return np.array([x.mean(), x.std(), y.mean(), y.std(), pearsonr(x,y)[0], slope, intercept, r_value**2])
+
     def error(self ,ds_stat, ref_stat):
         """
         This function returns the cummulative squared error 
@@ -98,10 +97,10 @@ class SimulatedAnnealing:
         row = np.random.randint(0, len(ds[0]))
         i_xm, i_ym = x[row], y[row]
         
-        print('This is row : {}'.format(row))
+        #print('This is row : {}'.format(row))
         
         #get summary statistics and calculate error of current dataset
-        init_stats = self.get_sum_stats(x,y)
+        init_stats = self.get_sum_stats(x,y)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
         init_err = self.error(init_stats, self.ref_stats)
         
         #Log the current error
@@ -121,7 +120,7 @@ class SimulatedAnnealing:
             curr_err = self.error(curr_stats, self.ref_stats)
             #determine if the error is better and values are within bounds
             close_enough = (curr_err < init_err  or do_bad)
-            within_bounds = y[row] > self.y_lim[0] and y[row] < self.y_lim[1] and x[row] > self.x_lim[0] and x[row] < self.x_lim[1]
+            within_bounds = (y[row] > self.y_lim[0]) and (y[row] < self.y_lim[1]) and (x[row] > self.x_lim[0]) and (x[row] < self.x_lim[1])
             
             if close_enough and within_bounds:
                 break
@@ -147,7 +146,9 @@ class SimulatedAnnealing:
 
     def plot_error(self):
         plt.figure(100)
-        plt.plot(self._ERROR)
+        plt.plot(np.log10(self._ERROR))
+        plt.xlabel(" Iteration ")
+        plt.xlabel(" Log_10(error) ")
         #plt.show()
 
     def plot_data(self):
